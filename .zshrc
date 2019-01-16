@@ -49,17 +49,20 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux)
+plugins=(git)
 
 # User configuration
 
-# export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/.bin:~/Applications:/opt/X11/bin"
+# export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/.bin:~/Applications:/opt/X11/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
-export LANG=en_UK.UTF-16
+#export LANG=en_UK
+#export LOCALE=en_UK
+#export LC_CTYPE=en_UK.UTF-16
+#export LC_ALL=en_UK.UTF-16
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -86,7 +89,9 @@ export LANG=en_UK.UTF-16
 alias d="docker"
 alias dl="docker logs -f --tail=1000"
 
-alias brepl="boot -i \"(require 'cider.tasks)\" -d org.clojure/tools.nrepl\:0.2.12 -d refactor-nrepl\:2.4.0-SNAPSHOT -d cider/cider-nrepl\:0.16.0-SNAPSHOT cider.tasks/add-middleware -m refactor-nrepl.middleware/wrap-refactor -m cider.nrepl/cider-middleware repl"
+alias brepl="boot -i \"(require 'cider.tasks)\" -d org.clojure/tools.nrepl\:0.2.12 -d refactor-nrepl\:2.4.0-SNAPSHOT -d cider/cider-nrepl\:0.18.0-SNAPSHOT cider.tasks/add-middleware -m refactor-nrepl.middleware/wrap-refactor -m cider.nrepl/cider-middleware repl"
+
+alias xc="xclip -selection c"
 
 # reduce delay of escape
 export KEYTIMEOUT=0.1
@@ -100,31 +105,16 @@ setopt interactivecomments
 # Zsh has a spelling corrector
 # setopt CORRECT
 
-# Put vim mode in right prompt
-#bindkey -v
-#bindkey -a '/' history-incremental-pattern-search-backward
-#bindkey "^P" history-search-backward
-#bindkey "^N" history-search-forward
-
-# backspace and ^h working even after
-# returning from command mode
-bindkey '^?' backward-delete-char
-bindkey '^h' backward-delete-char
-
-# ctrl-w removed word backwards
-bindkey '^w' backward-kill-word
-
 # ctrl-r starts searching history backward
 bindkey '^r' history-incremental-search-backward
-
-# Stop that annoying hit escape twice have to press i twice to get back into insert mode
-#noop () { }
-#zle -N noop
-#bindkey -M vicmd '\e' noop
 
 # caps lock key 
 # setxkbmap -option 'caps:ctrl_modifier'
 # xcape -e 'Caps_Lock=Escape'
 
-LC_CTYPE=en_UK.UTF-8
-LC_ALL=en_UK.UTF-8
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/andrew/Downloads/google-cloud-sdk-221.0.0-linux-x86_64/google-cloud-sdk/path.zsh.inc' ]; then . '/home/andrew/Downloads/google-cloud-sdk-221.0.0-linux-x86_64/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/andrew/Downloads/google-cloud-sdk-221.0.0-linux-x86_64/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/andrew/Downloads/google-cloud-sdk-221.0.0-linux-x86_64/google-cloud-sdk/completion.zsh.inc'; fi

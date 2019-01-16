@@ -155,8 +155,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 10
+   dotspacemacs-default-font '("Source Code Variable"
+                               :size 24
                                :weight normal
                                :width normal
                                :powerline-scale 1.2)
@@ -220,7 +220,7 @@ values."
    dotspacemacs-helm-no-header nil
    ;; define the position to display `helm', options are `bottom', `top',
    ;; `left', or `right'. (default 'bottom)
-   dotspacemacs-helm-position 'bottom
+   dotspacemacs-helm-position 'right
    ;; Controls fuzzy matching in helm. If set to `always', force fuzzy matching
    ;; in all non-asynchronous sources. If set to `source', preserve individual
    ;; source settings. Else, disable fuzzy matching in all sources.
@@ -336,7 +336,10 @@ package is loaded, you should place your code here."
   (require 'warnings)
   (add-to-list 'warning-suppress-types '(undo discard-info))
 
-  (cua-mode t)
+  (cua-mode 't)
+  ;;(C-mode t)
+  (setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
+
 
   ;; set keys for Apple keyboard, for emacs in OS X
   (setq mac-option-modifier 'meta) ; make alt key do Meta
@@ -372,39 +375,81 @@ package is loaded, you should place your code here."
 
   ;; I dont know if this works yet
   (defun clj-hook ()
-    (local-set-key (kbd "C-s-l") 'cider-eval-buffer)
-    (local-set-key (kbd "<C-s-return>") 'cider-eval-region))
+    (local-set-key (kbd "C-M-l") 'cider-eval-buffer)
+    (local-set-key (kbd "<C-M-return>") 'cider-eval-region))
 
   (add-hook 'clojure-mode-hook 'clj-hook)
 
-  (global-set-key (kbd "<C-s-tab>") 'cider-format-defun)
-  (global-set-key (kbd "C-s-h") 'cider-doc) ;; H
-  (global-set-key (kbd "C-s-/") 'comment-line)
-  (global-set-key (kbd "C-s-n") 'cider-repl-set-ns)  ;; N
-  (global-set-key (kbd "C-s-c") 'cider-repl-clear-buffer) ;; C
-  (global-set-key (kbd "C-s-i") 'cider-format-region)  ;; I
-  ;; (global-set-key (kbd "<C-s-l>") 'cider-inspect-last-result)
-  (global-set-key (kbd "C-s-t") 'cider-test-run-test)
-  (global-set-key (kbd "C-s-g") 'cider-find-var) ;; G
-  (global-set-key (kbd "<C-s-right>") 'forward-sexp)
-  (global-set-key (kbd "<C-s-left>") 'backward-sexp)
+  (defun cider-clear-repl-and-run-test ()
+    (interactive)
+    (cider-eval-buffer)
+    (cider-switch-to-repl-buffer)
+    (cider-repl-clear-buffer)
+    (previous-buffer)
+    (cider-test-run-test)
+    )
+
+  (defun cider-connect-gradle-clojureRepl ()
+    (interactive)
+    (cider-nrepl-connect (list :host "localhost"
+                               :port 7888) ))
+
+  ;;(global-set-key (kbd "<C-s-tab>") 'cider-format-defun)
+  (global-set-key (kbd "C-M-h") 'cider-doc) ;; H
+  (global-set-key (kbd "C-M-/") 'comment-line)
+  (global-set-key (kbd "C-M-n") 'cider-repl-set-ns)  ;; N
+  (global-set-key (kbd "C-M-c") 'cider-repl-clear-buffer) ;; C
+  (global-set-key (kbd "C-M-r") 'cider-connect-gradle-clojureRepl) ;; R
+  (global-set-key (kbd "C-M-i") 'cider-format-region)  ;; I
+  (global-set-key (kbd "<C-M-l>") 'cider-inspect-last-result)
+  ;;(global-set-key (kbd "C-M-t") 'cider-test-run-test)
+  (global-set-key (kbd "C-M-t") 'cider-clear-repl-and-run-test)
+  (global-set-key (kbd "C-M-g") 'cider-find-var) ;; G
+  (global-set-key (kbd "<C-M-right>") 'forward-sexp)
+  (global-set-key (kbd "<C-M-left>") 'backward-sexp)
 
   (add-hook 'cider-mode-hook #'eldoc-mode)
 
+  (setq cider-save-file-on-load t)
+
+  ;; XML formatting with xlint installed
+  ;; (defun xml-format ()
+    ;; (interactive)
+    ;; (save-excursion
+      ;; (shell-command-on-region (region-beginning) (region-end))
+      ;; )
+    ;; )
+
+  (global-set-key (kbd "<s-t>") 'toggle-truncate-lines)
+
+  ;; (defun copy-nice ()
+    ;; (interactive)
+    ;; (kill-ring-save)
+    ;; (cua-copy-region))
+
+ ;; To refresh SPC f e R
+
   ;; Copy paste. I know right.
-  (define-key global-map [?\s-x] 'kill-region)
-  (define-key global-map [?\s-c] 'kill-ring-save)
-  (define-key global-map [?\s-v] 'yank)
-  (define-key global-map [?\s-z] 'undo)
-  (define-key global-map [?\s-Z] 'redo)
-  (define-key global-map [?\s-s] 'save-buffer)
-  (define-key global-map [?\s-=] 'text-scale-increase)
-  (define-key global-map [?\s--] 'text-scale-decrease)
-  (setq evil-want-fine-undo t)
+ ;; (define-key global-map [?\C-x] 'kill-region)
+  (global-set-key (kbd "»") 'cua-cut-region) ;; AlrGr-x
+ ;; (define-key global-map [?\C-c] 'kill-ring-save)
+  (global-set-key (kbd "¢") 'cua-copy-region) ;; AtlGr-c
+ ;; (define-key global-map [?\C-v] 'yank)
+  (global-set-key (kbd "“") 'cua-paste) ;;  AltGr-v
+ ;; (define-key global-map [?\C-z] 'undo)
+  (global-set-key (kbd "«") 'undo )
+  ;; (define-key global-map [?\C-Z] 'redo)
+  ;; (global-set-key (kbd "") 'redo)
+  (setq cua-keep-region-after-copy nil)
+
+ (define-key global-map [?\C-s] 'save-buffer)
+ (define-key global-map [?\C-=] 'text-scale-increase)
+ (define-key global-map [?\C--] 'text-scale-decrease)
+ (setq evil-want-fine-undo t)
 
   ;; Open and find
-  (define-key global-map [?\s-o] 'projectile-find-file-dwim)
-  (define-key global-map [?\s-h] 'projectile-grep)
+  (global-set-key (kbd "C-ø") 'projectile-find-file-dwim)
+  (define-key global-map [?\C-h] 'projectile-grep)
 
 
    ;;; esc quits
@@ -417,29 +462,29 @@ package is loaded, you should place your code here."
   (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
   (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-  (eval-after-load "cider"
-    '(global-set-key (kbd "<C-s-r>") (lambda ()
-                                   (interactive)
-                                   (projectile-save-project-buffers)
-                                   (spacemacs/cider-send-buffer-in-repl-and-focus)
-                                   (cider-repl-clear-buffer)
-                                   (cider-repl-set-ns "repl")
-                                   (cider-repl--replace-input "(require 'repl)")
-                                   (cider-repl-return)
-                                   (cider-repl--replace-input "(in-ns 'repl)")
-                                   (cider-repl-return)
-                                   (cider-repl--replace-input "(reset)")
-                                   (cider-repl-return)
-                                   (previous-buffer)
-                                   )))
+  ;; (eval-after-load "cider"
+    ;; '(global-set-key (kbd "<C-s-r>") (lambda ()
+                                   ;; (interactive)
+                                   ;; (projectile-save-project-buffers)
+                                   ;; (spacemacs/cider-send-buffer-in-repl-and-focus)
+                                   ;; (cider-repl-clear-buffer)
+                                   ;; (cider-repl-set-ns "repl")
+                                   ;; (cider-repl--replace-input "(require 'repl)")
+                                   ;; (cider-repl-return)
+                                   ;; (cider-repl--replace-input "(in-ns 'repl)")
+                                   ;; (cider-repl-return)
+                                   ;; (cider-repl--replace-input "(reset)")
+                                   ;; (cider-repl-return)
+                                   ;; (previous-buffer)
+                                   ;; )))
 
   ;; Make ‘-’ a word character
   ;; (modify-syntax-entry ?- "w" clojure-mode-syntax-table)
 
   ;; Expand regions
   (require 'expand-region)
-  (global-set-key (kbd "<C-s-up>") #'er/expand-region)
-  (global-set-key (kbd "<C-s-down>") #'er/contract-region)
+  (global-set-key (kbd "<C-M-up>") #'er/expand-region)
+  (global-set-key (kbd "<C-M-down>") #'er/contract-region)
 
   ;; Random editor changes
   (delete-selection-mode 1)  ; Does not seem to work as promised
@@ -452,16 +497,16 @@ package is loaded, you should place your code here."
   ;; (global-set-key [M-s-down] 'drag-stuff-down)
 
   ;; Move windows
-  (global-set-key (kbd "<s-right>") #'evil-window-right)
-  (global-set-key (kbd "<s-left>") #'evil-window-left)
-  (global-set-key (kbd "<s-up>") #'evil-window-up)
-  (global-set-key (kbd "<s-down>") #'evil-window-down)
+  (global-set-key (kbd "<M-right>") #'evil-window-right)
+  (global-set-key (kbd "<M-left>") #'evil-window-left)
+  (global-set-key (kbd "<M-up>") #'evil-window-up)
+  (global-set-key (kbd "<M-down>") #'evil-window-down)
 
   ;; Set global word move
-  (global-set-key (kbd "<M-right>") #'subword-forward)
-  (global-set-key (kbd "<M-left>") #'subword-backward)
-  (global-set-key (kbd "<M-down>") #'evil-forward-paragraph)
-  (global-set-key (kbd "<M-up>") #'evil-backward-paragraph)
+  ;; (global-set-key (kbd "<M-f>") #'subword-forward)
+  ;; (global-set-key (kbd "<M-s>") #'subword-backward)
+  ;; (global-set-key (kbd "<M-d>") #'evil-forward-paragraph)
+  ;; (global-set-key (kbd "<M-e>") #'evil-backward-paragraph)
 
   (global-set-key (kbd "<C-right>") #'evil-end-of-line)
   (global-set-key (kbd "<C-left>") #'evil-beginning-of-visual-line)
@@ -470,6 +515,10 @@ package is loaded, you should place your code here."
 
   (set-face-attribute 'default nil :height 140)
   (delete-selection-mode 1)
+
+  ;; Redo. Cause Im sick of not knowing
+  ;;(global-set-key (kbd "U") #'undo-tree-redo)
+
 
   ;; Log keystrokes
   (require 'command-log-mode)
@@ -481,6 +530,8 @@ package is loaded, you should place your code here."
   (global-set-key [M-s-up] 'tabbar-forward-group)
   (global-set-key [M-s-down] 'tabbar-backward-group)
   (setq tabbar-use-images nil)
+
+  (global-set-key (kbd "<C-w>") 'spacemacs/kill-this-buffer)
   (define-key global-map [?\s-w] 'spacemacs/kill-this-buffer)
 
 
@@ -672,7 +723,7 @@ package is loaded, you should place your code here."
        (projectile-project-root))))
  '(package-selected-packages
    (quote
-    (winum restclient-helm ob-restclient parent-mode fuzzy flx evil goto-chg undo-tree f diminish company-restclient know-your-http-well paredit s eval-sexp-fu pkg-info epl packed avy popup helm-cider helm-cider-history yaml-mode mmm-mode markdown-toc markdown-mode gh-md scad-mode ess-smart-equals ess-R-object-popup ess-R-data-view ctable ess julia-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic elm-mode web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc company-tern dash-functional tern coffee-mode ht restclient ob-http edn peg queue csv-mode smeargle orgit org magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl elscreen-buffer-group elscreen projectile anzu hydra inflections multiple-cursors cider seq spinner clojure-mode bind-key auto-complete company iedit smartparens bind-map highlight yasnippet helm helm-core async powerline dash drag-stuff tabbar-ruler mode-icons tabbar web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu elisp-slime-nav dumb-jump define-word company-statistics command-log-mode column-enforce-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (ghub sesman winum restclient-helm ob-restclient parent-mode fuzzy flx evil goto-chg undo-tree f diminish company-restclient know-your-http-well paredit s eval-sexp-fu pkg-info epl packed avy popup helm-cider helm-cider-history yaml-mode mmm-mode markdown-toc markdown-mode gh-md scad-mode ess-smart-equals ess-R-object-popup ess-R-data-view ctable ess julia-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic elm-mode web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc company-tern dash-functional tern coffee-mode ht restclient ob-http edn peg queue csv-mode smeargle orgit org magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl elscreen-buffer-group elscreen projectile anzu hydra inflections multiple-cursors cider seq spinner clojure-mode bind-key auto-complete company iedit smartparens bind-map highlight yasnippet helm helm-core async powerline dash drag-stuff tabbar-ruler mode-icons tabbar web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu elisp-slime-nav dumb-jump define-word company-statistics command-log-mode column-enforce-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(projectile-project-root-files
    (quote
     ("rebar.config" "project.clj" "build.boot" "SConstruct" "pom.xml" "build.sbt" "gradlew" ".ensime" "Gemfile" "requirements.txt" "setup.py" "tox.ini" "composer.json" "Cargo.toml" "mix.exs" "stack.yaml" "info.rkt" "DESCRIPTION" "TAGS" "GTAGS")))
