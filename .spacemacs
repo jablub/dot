@@ -640,7 +640,7 @@ before packages are loaded."
 ;  (add-hook 'cider-mode-hook #'eldoc-mode)
   (add-hook 'clojure-mode-hook 'my-clj-hook)
 
-  (setq cider-show-error-buffer 'only-in-repl)
+  (setq cider-show-error-buffer nil)
   (setq cider-auto-select-error-buffer nil)
   (setq cider-repl-buffer-size-limit 100000)
 
@@ -705,7 +705,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
-   '(yaml-mode json-navigator hierarchy json-mode json-snatcher json-reformat web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data web-beautify tern prettier-js npm-mode nodejs-repl livid-mode skewer-mode js2-refactor js2-mode js-doc import-js grizzl impatient-mode htmlize simple-httpd helm-gtags ggtags evil-matchit dap-mode lsp-treemacs bui lsp-mode counsel-gtags counsel swiper ivy add-node-modules-path tabbar expand-region auto-dim-other-buffers evil-smartparens smartparens yasnippet-snippets which-key use-package treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-evil smeargle pcre2el overseer nameless magit-section macrostep hybrid-mode helm-xref helm-themes helm-swoop helm-projectile helm-org helm-mode-manager helm-make helm-ls-git helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy forge flycheck-package flycheck-elsa evil-mc emr elisp-slime-nav dotenv-mode diminish bind-map auto-yasnippet auto-compile ace-jump-helm-line ac-ispell))
+   '(yaml yaml-mode json-navigator hierarchy json-mode json-snatcher json-reformat web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data web-beautify tern prettier-js npm-mode nodejs-repl livid-mode skewer-mode js2-refactor js2-mode js-doc import-js grizzl impatient-mode htmlize simple-httpd helm-gtags ggtags evil-matchit dap-mode lsp-treemacs bui lsp-mode counsel-gtags counsel swiper ivy add-node-modules-path tabbar expand-region auto-dim-other-buffers evil-smartparens smartparens yasnippet-snippets which-key use-package treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-evil smeargle pcre2el overseer nameless magit-section macrostep hybrid-mode helm-xref helm-themes helm-swoop helm-projectile helm-org helm-mode-manager helm-make helm-ls-git helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy forge flycheck-package flycheck-elsa evil-mc emr elisp-slime-nav dotenv-mode diminish bind-map auto-yasnippet auto-compile ace-jump-helm-line ac-ispell))
  '(safe-local-variable-values
    '((cider-shadow-cljs-default-options . "app")
      (javascript-backend . tide)
